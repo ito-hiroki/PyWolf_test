@@ -28,10 +28,13 @@ class SampleAgent(object):
         
     def update(self, base_info, diff_data, request):
         self.base_info = base_info
-        # print(base_info)
-        # print(diff_data)
+        print("base_info:/n")
+        print(base_info)
+        print("diff_data:/n")
+        print(diff_data)
         
     def dayStart(self):
+        
         return None
     
     def talk(self):
