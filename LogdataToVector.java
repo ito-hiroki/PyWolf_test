@@ -15,9 +15,17 @@ public class LogdataToVector {
 	}
 
 	private void mainLoop(){
-		File logdata = new File("D:\\GitHub\\PyWolf_test\\testgat15");
+		File logdata = new File("D:\\GitHub\\PyWolf_test\\gat2017log15");
 		for(File dir:logdata.listFiles()){
 			System.out.println(dir);
+			String dir_name = dir.getName();
+
+			/*途中から始めるため*/
+			int i = Integer.parseInt(dir_name);
+			if(i < 396) continue;
+			
+			File fordir = new File("result/"+dir_name);
+			fordir.mkdir();
 			for(File file:dir.listFiles()){
 				String name=file.getName();
 				List<String[]> stringList = null;
@@ -26,7 +34,7 @@ public class LogdataToVector {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				outFile("test_result/gat2017log15_"+name+".csv", toIntList(stringList));
+				outFile("result/" + dir_name + "/gat2017log15_"+name+".csv", toIntList(stringList));
 			}
 		}
 	}
