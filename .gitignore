@@ -111,3 +111,7 @@ gat2017log15
 
 # java class data
 *.class
+
+# Folder
+/results
+/dataset
