@@ -15,6 +15,7 @@ from chainer import training
 from chainer.training import extensions
 
 import pickle
+from chainer.datasets import tuple_dataset
 
 
 # Network definition
@@ -63,7 +64,7 @@ def main():
     # Set up a neural network to train
     # Classifier reports softmax cross entropy loss and accuracy at every
     # iteration, which will be used by the PrintReport extension below.
-    model = L.Classifier(MLP(args.unit, 10))
+    model = L.Classifier(MLP(args.unit, 2))
     if args.gpu >= 0:
         # Make a specified GPU current
         chainer.backends.cuda.get_device_from_id(args.gpu).use()
@@ -78,11 +79,38 @@ def main():
     #オリジナルデータ読み込み
     with open('gat2017log15_dataset.pickle', 'rb') as f:
         dataset = pickle.load(f)
-        train = dataset['train']
-        test = dataset['test']
+        
+    train = dataset['train']
+    test = dataset['test']
+    
+    train_data = [[],[]]
+    test_data = [[],[]]
+    
+    for i in range(len(train)):
+        if(train[i][1] == -1):
+            train[i][1] = 0
+        train_data[0].append(train[i][0])
+        train_data[1].append(train[i][1])
+    print("train:"+str(len(train)))
+    for i in range(len(test)):
+        if(test[i][1] == -1):
+            test[i][1] = 0
+        test_data[0].append(test[i][0])
+        test_data[1].append(test[i][1])
+    print("test:"+str(len(test)))
+    import pdb; pdb.set_trace()
 
-    train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
-    test_iter = chainer.iterators.SerialIterator(test, args.batchsize,
+
+    train_data = tuple_dataset.TupleDataset(train_data[0], train_data[1])
+    test_data = tuple_dataset.TupleDataset(test_data[0], test_data[1])
+    """
+    dataset = {"train": train, "test": test}
+    with open('NN_werewolf_dataset.pickle', 'wb') as g:
+        pickle.dump(dataset, g)
+    """
+
+    train_iter = chainer.iterators.SerialIterator(train_data, args.batchsize)
+    test_iter = chainer.iterators.SerialIterator(test_data, args.batchsize,
                                                  repeat=False, shuffle=False)
 
     # Set up a trainer
