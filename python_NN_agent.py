@@ -13,6 +13,7 @@ import chainer
 import chainer.links as L
 import chainer.functions as F
 from chainer.datasets import tuple_dataset
+import random
 
 
 
@@ -203,6 +204,7 @@ class SampleAgent(object):
         # vote宣言
         if(self.vote_declare != self.vote()):
             self.vote_declare = self.vote()
+            print(self.vote_declare)
             return cb.vote(self.vote_declare)
         
         # 発言回数残ってたらskip
@@ -244,6 +246,15 @@ class SampleAgent(object):
                 idx = num+1
                 print(idx)
                 return idx
+                
+        # 4. わかんねえからランダム投票
+        vote_list = []
+        for i, status in enumerate(self.base_info['statusMap'].values(), 1):
+            if(status == 'ALIVE' and i != self.base_info['agentIdx']):
+                vote_list.append(i)
+        idx = random.choice(vote_list)
+    
+        return idx
     
     def attack(self):
         return self.base_info['agentIdx']
