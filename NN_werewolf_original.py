@@ -18,7 +18,7 @@ from chainer.training import extensions
 import numpy as np
 
 #オリジナルデータ読み込み
-with open('gat2017log15_dataset.pickle', 'rb') as f:
+with open('dataset/gat2017log15_dataset.pickle', 'rb') as f:
     dataset = pickle.load(f)
         
 train = dataset['train']
@@ -48,7 +48,7 @@ test_data = tuple_dataset.TupleDataset(test_data[0], test_data[1])
 
 train, valid = split_dataset_random(train_data, int(len(train_data)*0.8), seed=0)
 
-batchsize = 1000
+batchsize = 14
 
 train_iter = iterators.SerialIterator(train, batchsize)
 valid_iter = iterators.SerialIterator(valid, batchsize, repeat=False, shuffle=False)
@@ -80,7 +80,7 @@ updater = training.StandardUpdater(train_iter, optimizer, device=gpu_id)
 
 max_epoch = 10
 
-trainer = training.Trainer(updater, (max_epoch, 'epoch'), out='werewolf_result')
+trainer = training.Trainer(updater, (max_epoch, 'epoch'), out='werewolf_result_batchsize14')
 
 trainer.extend(extensions.LogReport())
 trainer.extend(extensions.snapshot(filename='snapshot_epoch-{.updater.epoch}'))

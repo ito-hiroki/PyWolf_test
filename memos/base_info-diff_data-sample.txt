@@ -35,3 +35,213 @@ diff_data:/n
 12     11    1   12               VOTE Agent[14]     0  talk
 13      1    1   13               VOTE Agent[10]     0  talk
 14     14    1   14     COMINGOUT Agent[14] SEER     0  talk
+
+------------------------------------------------------------------------------------------------------------------
+diff_data:
+    agent  day  idx                         text  turn  type
+0       9    1    0               VOTE Agent[01]     0  talk
+1       3    1    1               VOTE Agent[14]     0  talk
+2       7    1    2               VOTE Agent[13]     0  talk
+3      11    1    3  ESTIMATE Agent[07] WEREWOLF     0  talk
+4      13    1    4  ESTIMATE Agent[14] WEREWOLF     0  talk
+5       1    1    5               VOTE Agent[04]     0  talk
+6      14    1    6     COMINGOUT Agent[14] SEER     0  talk
+7       4    1    7               VOTE Agent[08]     0  talk
+8       2    1    8               VOTE Agent[01]     0  talk
+9      10    1    9               VOTE Agent[05]     0  talk
+10      6    1   10               VOTE Agent[08]     0  talk
+11     15    1   11                         Skip     0  talk
+12      8    1   12     COMINGOUT Agent[08] SEER     0  talk
+13     12    1   13  ESTIMATE Agent[10] WEREWOLF     0  talk
+14      5    1   14               VOTE Agent[07]     0  talk
+diff_data:
+    agent  day  idx                     text  turn  type
+0       7    1   15                     Skip     1  talk
+1       6    1   16                     Skip     1  talk
+2      14    1   17  DIVINED Agent[07] HUMAN     1  talk
+3       3    1   18                     Skip     1  talk
+4       9    1   19                     Skip     1  talk
+5       2    1   20                     Skip     1  talk
+6       4    1   21                     Skip     1  talk
+7      10    1   22                     Skip     1  talk
+8       1    1   23                     Skip     1  talk
+9       8    1   24  DIVINED Agent[01] HUMAN     1  talk
+10     12    1   25           VOTE Agent[10]     1  talk
+11      5    1   26                     Skip     1  talk
+12     13    1   27           VOTE Agent[14]     1  talk
+13     11    1   28           VOTE Agent[07]     1  talk
+14     15    1   29                     Skip     1  talk
+diff_data:
+    agent  day  idx                         text  turn  type
+0       5    1   30                         Skip     2  talk
+1      14    1   31  ESTIMATE Agent[05] WEREWOLF     2  talk
+2      13    1   32                         Skip     2  talk
+3       6    1   33                         Skip     2  talk
+4       4    1   34                         Skip     2  talk
+5       7    1   35                         Skip     2  talk
+6       8    1   36               VOTE Agent[07]     2  talk
+7      15    1   37                         Over     2  talk
+8       3    1   38                         Skip     2  talk
+9       9    1   39                         Skip     2  talk
+10     10    1   40                         Skip     2  talk
+11     12    1   41                         Skip     2  talk
+12     11    1   42                         Skip     2  talk
+13      1    1   43                         Skip     2  talk
+14      2    1   44                         Skip     2  talk
+diff_data:
+    agent  day  idx                           text  turn  type
+0       3    1   45                           Over     3  talk
+1      11    1   46                           Skip     3  talk
+2       8    1   47    ESTIMATE Agent[14] WEREWOLF     3  talk
+3       7    1   48                           Over     3  talk
+4       9    1   49                           Over     3  talk
+5      15    1   50                           Over     3  talk
+6       4    1   51                           Over     3  talk
+7      10    1   52                           Over     3  talk
+8      14    1   53  REQUEST(DIVINATION Agent[05])     3  talk
+9       6    1   54                           Over     3  talk
+10      1    1   55                           Over     3  talk
+11      2    1   56                           Over     3  talk
+12     12    1   57                           Skip     3  talk
+13     13    1   58                           Skip     3  talk
+14      5    1   59                           Over     3  talk
+diff_data:
+    agent  day  idx            text  turn  type
+0       3    1   60            Over     4  talk
+1       2    1   61            Over     4  talk
+2      12    1   62            Over     4  talk
+3      11    1   63            Over     4  talk
+4       4    1   64            Over     4  talk
+5      15    1   65            Over     4  talk
+6       5    1   66            Over     4  talk
+7       6    1   67            Over     4  talk
+8       1    1   68            Over     4  talk
+9       7    1   69            Over     4  talk
+10      8    1   70  VOTE Agent[14]     4  talk
+11     13    1   71            Over     4  talk
+12     10    1   72            Over     4  talk
+13      9    1   73            Over     4  talk
+14     14    1   74  VOTE Agent[05]     4  talk
+diff_data:
+    agent  day  idx                         text  turn  type
+0       7    1   75                         Over     5  talk
+1      13    1   76                         Over     5  talk
+2       3    1   77                         Over     5  talk
+3       2    1   78                         Over     5  talk
+4      11    1   79                         Over     5  talk
+5      15    1   80                         Over     5  talk
+6      12    1   81                         Over     5  talk
+7       8    1   82                         Skip     5  talk
+8       1    1   83                         Over     5  talk
+9       5    1   84                         Over     5  talk
+10     10    1   85                         Over     5  talk
+11      6    1   86                         Over     5  talk
+12     14    1   87  ESTIMATE Agent[08] WEREWOLF     5  talk
+13      4    1   88                         Over     5  talk
+14      9    1   89                         Over     5  talk
+diff_data:
+    agent  day  idx                           text  turn  type
+0       6    1   90                           Over     6  talk
+1       5    1   91                           Over     6  talk
+2       8    1   92                           Skip     6  talk
+3       7    1   93                           Over     6  talk
+4      13    1   94                           Over     6  talk
+5      10    1   95                           Over     6  talk
+6       9    1   96                           Over     6  talk
+7      12    1   97                           Over     6  talk
+8       3    1   98                           Over     6  talk
+9      14    1   99  REQUEST(DIVINATION Agent[08])     6  talk
+10      4    1  100                           Over     6  talk
+11     11    1  101                           Over     6  talk
+12      2    1  102                           Over     6  talk
+13     15    1  103                           Over     6  talk
+14      1    1  104                           Over     6  talk
+diff_data:
+    agent  day  idx            text  turn  type
+0      14    1  105  VOTE Agent[08]     7  talk
+1       6    1  106            Over     7  talk
+2      10    1  107            Over     7  talk
+3      15    1  108            Over     7  talk
+4       4    1  109            Over     7  talk
+5       1    1  110            Over     7  talk
+6       3    1  111            Over     7  talk
+7       5    1  112            Over     7  talk
+8       8    1  113            Over     7  talk
+9      13    1  114            Over     7  talk
+10      9    1  115            Over     7  talk
+11      2    1  116            Over     7  talk
+12     12    1  117            Over     7  talk
+13      7    1  118            Over     7  talk
+14     11    1  119            Over     7  talk
+diff_data:
+    agent  day  idx  text  turn  type
+0       6    1  120  Over     8  talk
+1       2    1  121  Over     8  talk
+2       1    1  122  Over     8  talk
+3      11    1  123  Over     8  talk
+4       5    1  124  Over     8  talk
+5      14    1  125  Skip     8  talk
+6       4    1  126  Over     8  talk
+7      12    1  127  Over     8  talk
+8       7    1  128  Over     8  talk
+9       8    1  129  Over     8  talk
+10      9    1  130  Over     8  talk
+11     10    1  131  Over     8  talk
+12     13    1  132  Over     8  talk
+13      3    1  133  Over     8  talk
+14     15    1  134  Over     8  talk
+diff_data:
+    agent  day  idx  text  turn  type
+0       5    1  135  Over     9  talk
+1       1    1  136  Over     9  talk
+2      13    1  137  Over     9  talk
+3       8    1  138  Over     9  talk
+4      14    1  139  Skip     9  talk
+5      11    1  140  Over     9  talk
+6      12    1  141  Over     9  talk
+7       3    1  142  Over     9  talk
+8       6    1  143  Over     9  talk
+9      15    1  144  Over     9  talk
+10      4    1  145  Over     9  talk
+11     10    1  146  Over     9  talk
+12      7    1  147  Over     9  talk
+13      2    1  148  Over     9  talk
+14      9    1  149  Over     9  talk
+diff_data:
+    agent  day  idx  text  turn  type
+0       5    1  150  Over    10  talk
+1       3    1  151  Over    10  talk
+2       6    1  152  Over    10  talk
+3       8    1  153  Over    10  talk
+4      12    1  154  Over    10  talk
+5      13    1  155  Over    10  talk
+6      14    1  156  Over    10  talk
+7       9    1  157  Over    10  talk
+8       7    1  158  Over    10  talk
+9      15    1  159  Over    10  talk
+10     11    1  160  Over    10  talk
+11      1    1  161  Over    10  talk
+12      2    1  162  Over    10  talk
+13     10    1  163  Over    10  talk
+14      4    1  164  Over    10  talk
+diff_data:
+Empty DataFrame
+Columns: [agent, day, idx, text, turn, type]
+Index: []
+diff_data:
+    agent  day  idx            text  turn  type
+0       4    1    1  VOTE Agent[04]    -1  vote
+1       1    1    2  VOTE Agent[01]    -1  vote
+2      14    1    3  VOTE Agent[14]    -1  vote
+3       8    1    4  VOTE Agent[08]    -1  vote
+4       7    1    5  VOTE Agent[07]    -1  vote
+5       8    1    6  VOTE Agent[08]    -1  vote
+6      13    1    7  VOTE Agent[13]    -1  vote
+7      14    1    8  VOTE Agent[14]    -1  vote
+8       1    1    9  VOTE Agent[01]    -1  vote
+9       5    1   10  VOTE Agent[05]    -1  vote
+10      7    1   11  VOTE Agent[07]    -1  vote
+11     10    1   12  VOTE Agent[10]    -1  vote
+12     14    1   13  VOTE Agent[14]    -1  vote
+13      8    1   14  VOTE Agent[08]    -1  vote
+14     11    1   15  VOTE Agent[11]    -1  vote
