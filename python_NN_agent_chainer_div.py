@@ -1,58 +1,19 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jun 15 18:09:52 2018
-
-@author: hiroki
-"""
-
 from __future__ import print_function, division 
-
-# this is main script
-# simple version test
 
 import aiwolfpy
 import aiwolfpy.contentbuilder as cb
 
 import sub_func as sf
 import numpy as np
-from chainer import serializers
-import chainer 
-import chainer.links as L
-import chainer.functions as F
-from chainer.datasets import tuple_dataset
 import random
+import chainer_predict
 
 
-
-myname = 'goldfish'
-
-class MLP(chainer.Chain):
-
-    def __init__(self, n_mid_units=100, n_out=2):
-        super(MLP, self).__init__()
-
-        # パラメータを持つ層の登録
-        with self.init_scope():
-            self.l1 = L.Linear(None, n_mid_units)
-            self.l2 = L.Linear(n_mid_units, n_mid_units)
-            self.l3 = L.Linear(n_mid_units, n_out)
-
-    def __call__(self, x):
-        # データを受け取った際のforward計算を書く
-        h1 = F.relu(self.l1(x))
-        h2 = F.relu(self.l2(h1))
-        return self.l3(h2)
-
-class SampleAgent(object):
+class Goldfish(object):
     
     def __init__(self, agent_name):
         # myname
         self.myname = agent_name
-        
-        self.infer_net = MLP()
-        serializers.load_npz('./results/werewolf_result_batchsize14/snapshot_epoch-2', \
-                             self.infer_net, path='updater/model:main/predictor/')
-        
         
         
     def getName(self):
@@ -76,8 +37,6 @@ class SampleAgent(object):
         self.dead = []
         # vote宣言したかしていないか
         self.vote_declare = 0
-        # 霊媒師ローラようにCOされたmediumの数
-        self.medium_num = 0
         # 一日の発言回数管理
         self.talk_turn = 0
         
@@ -97,7 +56,14 @@ class SampleAgent(object):
         self.medium_co_order = 0
         # vote宣言の内容
         self.infoTalkvote = np.zeros((15,2))
-        
+        # 霊媒結果の保存  形式:[[**(番号), roll], [**(番号), roll]...]
+        self.result_roll = []
+        # 結果を発表したかしてないかFlag
+        self.not_reported = True
+        # CO用
+        self.comingout = ''
+        #CO日を決める
+        self.comingoutday = random.choice([3,4])
         
     def update(self, base_info, diff_data, request):
         self.base_info = base_info
@@ -106,24 +72,6 @@ class SampleAgent(object):
         print("diff_data:")
         print(diff_data)
         
-        ### 情報集め ###
-        for i in range(diff_data.shape[0]):
-            if(diff_data['type'][i] == 'talk'):
-                content = diff_data['text'][i].split(" ")
-                
-                if(content[0] == 'COMINGOUT'):
-                    if(content[2] == 'MEDIUM'):
-                        self.medium_num = self.medium_num + 1
-                    # [**(番号),roll]
-                    self.called_comingout.append([diff_data['agent'][i], content[2]])
-                    
-                if(content[0] == 'DIVINED'):
-                    # [**(使用者番号),**(対象者番号),roll]
-                    self.called_divined.append([diff_data['agent'][i], sf.name2num(content[1]), content[2]])
-                    
-            if(diff_data['type'][i] == 'dead'):
-                self.dead.append(diff_data['agent'][i])
-                
         ### NN用のデータを集める ###
         # 最初に記録する情報
         if(self.onlyone):
@@ -138,10 +86,13 @@ class SampleAgent(object):
         # diff_dataの中をなめていく
         for i in range(diff_data.shape[0]):
             # 始めにtypeがtalkだった場合(今回はほとんどこれ)
+            content = diff_data['text'][i].split(" ")
             if(diff_data['type'][i] == 'talk'):
-                content = diff_data['text'][i].split(" ")
                 # 内容がCOの場合
                 if(content[0] == 'COMINGOUT' and diff_data['agent'][i] == sf.name2num(content[1])):
+                    # 一応誰が何をCOしたのか記録
+                    # [**(番号),roll]
+                    self.called_comingout.append([diff_data['agent'][i], content[2]])
                     # 霊媒師かつ発話エージェントと発話対象が同じであれば
                     if(content[2] == 'MEDIUM'):
                         self.medium_co_num += 1
@@ -154,6 +105,8 @@ class SampleAgent(object):
                         self.info[diff_data['agent'][i]-1][1] = self.seer_co_order
                 # 内容がDIVINED
                 if(content[0] == 'DIVINED'):
+                    # [**(使用者番号),**(対象者番号),roll]
+                    self.called_divined.append([diff_data['agent'][i], sf.name2num(content[1]), content[2]])
                     # 人狼判定
                     if(content[2] == 'WEREWOLF'):
                         # 受けた人狼判定数更新
@@ -177,7 +130,18 @@ class SampleAgent(object):
                 if(self.infoTalkvote[diff_data['idx'][i]-1][0] != diff_data['agent'][i] \
                    and self.infoTalkvote[diff_data['idx'][i]-1][1] == diff_data['day'][i]):
                     self.info[diff_data['idx'][i]-1][9] = 1
-                    
+
+            # typeがidentifyだった場合
+            if(diff_data['type'][i] == 'identify'):
+                # 投票したかしてないか
+                self.not_reported = True
+                # 霊媒結果の保存  形式:[[**(番号), roll], [**(番号), roll]...]
+                self.result_roll.append([diff_data['agent'][i], content[2]])
+            
+            # typeがdeadだった場合(白確の保存)
+            if(diff_data['type'][i] == 'dead'):
+                self.dead.append(diff_data['agent'][i])
+
         # 会話が1ターン終わったらco占い師数とco霊媒師数を代入する
         for i in range(len(self.base_info['statusMap'])):
             # co占い師数
@@ -208,13 +172,33 @@ class SampleAgent(object):
     def talk(self):
         self.talk_turn += 1
         
-        # vote宣言
+        # 1.CO
+        if self.base_info['myRole'] == 'MEDIUM' and self.comingout == '' \
+            and ( self.seer_co_num >= 2 or self.comingoutday <= self.base_info['day']):
+            self.comingout = 'MEDIUM'
+            return cb.comingout(self.base_info['agentIdx'], self.comingout)
+        """
+        elif self.base_info['myRole'] == 'SEER' and self.comingout == '':
+            self.comingout = 'SEER'
+            return cb.comingout(self.base_info['agentIdx'], self.comingout)
+        elif self.base_info['myRole'] == 'POSSESSED' and self.comingout == '':
+            self.comingout = 'SEER'
+            return cb.comingout(self.base_info['agentIdx'], self.comingout)
+        """
+        
+        # 2. 結果報告
+        if(self.not_reported):
+            if(self.base_info['myRole'] == 'MEDIUM' and self.result_roll != []):
+                ident = self.result_roll.pop()
+                return cb.comingout(ident[0], ident[1])
+        
+        # 3.vote宣言
         if(self.vote_declare != self.vote()):
             self.vote_declare = self.vote()
             print(self.vote_declare)
             return cb.vote(self.vote_declare)
         
-        # 発言回数残ってたらskip
+        # 4.発言回数残ってたらskip
         if self.talk_turn <= 10:
             return cb.skip()
         
@@ -224,17 +208,25 @@ class SampleAgent(object):
         return cb.over()
         
     def vote(self):
-        
+        # 霊媒師の場合、自分黒判定or偽霊媒師が現れた時は投票
+        if(self.base_info['myRole'] == 'MEDIUM'):
+            for i in self.called_divined:
+                if(i[1] == self.base_info['agentIdx'] and i[2] == 'WEREWOLF'):
+                    idx = i[0]
+                    return idx
+            for i in self.called_comingout:
+                if(i[1] == 'MEDIUM'):
+                    idx = i[0]
+                    return idx
+                    
         # 1. 殺された人or自分を人狼とdivineした占い師が生きてたら無条件で投票
         for i in self.called_divined:
             if(i[2] == 'WEREWOLF' and (i[1] == self.base_info['agentIdx'] or i[1] in self.dead)):
                 if(self.base_info['statusMap'][str(i[0])] == 'ALIVE'):
                     idx = i[0]
                     return idx
-                    # この場合は一応ESTIMATEした方がよくね？
-                    
         # 2. 2日目以降で霊媒師COが2以上の場合ローラー
-        if(self.base_info['day'] >= 2 and self.medium_num >= 2):
+        if(self.base_info['day'] >= 2 and self.medium_co_num >= 2):
             for i in self.called_comingout:
                 if(i[1] == 'MEDIUM' and self.base_info['statusMap'][str(i[0])] == 'ALIVE'):
                     idx = i[0]
@@ -242,17 +234,9 @@ class SampleAgent(object):
                     
         # 3. NN使って投票
         #x = tuple(np.array(self.info))
-        x = self.info
-        print(x)
-        with chainer.using_config('train', False), chainer.using_config('enable_backprop', False):
-            y = self.infer_net(x)
-        y = y.array
-        result = y.argmax(axis=1)
-        for i, num in enumerate(result):
-            if(self.base_info['statusMap'][str(i+1)] == 'ALIVE' and i == 1):
-                idx = num+1
-                print(idx)
-                return idx
+        idx = chainer_predict.estimate_wolf(self.info, self.base_info)
+        if(idx == -1):
+            return idx
                 
         # 4. わかんねえからランダム投票
         vote_list = []
@@ -267,6 +251,7 @@ class SampleAgent(object):
         return self.base_info['agentIdx']
     
     def divine(self):
+        
         return self.base_info['agentIdx']
     
     def guard(self):
@@ -301,8 +286,8 @@ class SampleAgent(object):
         return None
     
 
-
-agent = SampleAgent(myname)
+myname = "Goldfish"
+agent = Goldfish(myname)
     
 
 
