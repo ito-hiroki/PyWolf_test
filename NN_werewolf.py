@@ -5,7 +5,7 @@ Created on Wed Jun 13 23:51:46 2018
 @author: kumac
 """
 
-#!/usr/bin/env python
+# !/usr/bin/env python
 import argparse
 
 import chainer
@@ -75,31 +75,31 @@ def main():
     optimizer.setup(model)
 
     # Load the MNIST dataset
-    #train, test = chainer.datasets.get_mnist()
-    #オリジナルデータ読み込み
+    # train, test = chainer.datasets.get_mnist()
+    # オリジナルデータ読み込み
     with open('gat2017log15_dataset.pickle', 'rb') as f:
         dataset = pickle.load(f)
-        
+
     train = dataset['train']
     test = dataset['test']
-    
-    train_data = [[],[]]
-    test_data = [[],[]]
-    
+
+    train_data = [[], []]
+    test_data = [[], []]
+
     for i in range(len(train)):
-        if(train[i][1] == -1):
+        if (train[i][1] == -1):
             train[i][1] = 0
         train_data[0].append(train[i][0])
         train_data[1].append(train[i][1])
-    print("train:"+str(len(train)))
+    print("train:" + str(len(train)))
     for i in range(len(test)):
-        if(test[i][1] == -1):
+        if (test[i][1] == -1):
             test[i][1] = 0
         test_data[0].append(test[i][0])
         test_data[1].append(test[i][1])
-    print("test:"+str(len(test)))
-    import pdb; pdb.set_trace()
-
+    print("test:" + str(len(test)))
+    import pdb;
+    pdb.set_trace()
 
     train_data = tuple_dataset.TupleDataset(train_data[0], train_data[1])
     test_data = tuple_dataset.TupleDataset(test_data[0], test_data[1])

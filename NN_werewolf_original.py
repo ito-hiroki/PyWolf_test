@@ -23,21 +23,23 @@ with open('dataset/gat2017log15_dataset.pickle', 'rb') as f:
         
 train = dataset['train']
 test = dataset['test']
-    
+
 train_data = [[],[]]
 test_data = [[],[]]
     
 for i in range(len(train)):
     if(train[i][1] == -1):
         train[i][1] = 0
-    train_data[0].append(train[i][0])
-    train_data[1].append(train[i][1])
+    if(train[i][0][10] != 0):
+        train_data[0].append(train[i][0])
+        train_data[1].append(train[i][1])
 print("train:"+str(len(train)))
 for i in range(len(test)):
     if(test[i][1] == -1):
         test[i][1] = 0
-    test_data[0].append(test[i][0])
-    test_data[1].append(test[i][1])
+    if(test[i][0][10] != 0):
+        test_data[0].append(test[i][0])
+        test_data[1].append(test[i][1])
 print("test:"+str(len(test)))
 
 train_data[1] = np.array(train_data[1], dtype=np.int32)
@@ -62,14 +64,12 @@ class MLP(chainer.Chain):
         # パラメータを持つ層の登録
         with self.init_scope():
             self.l1 = L.Linear(None, n_mid_units)
-            self.l2 = L.Linear(n_mid_units, n_mid_units)
-            self.l3 = L.Linear(n_mid_units, n_out)
+            self.l2 = L.Linear(n_mid_units, n_out)
 
     def __call__(self, x):
         # データを受け取った際のforward計算を書く
         h1 = F.relu(self.l1(x))
-        h2 = F.relu(self.l2(h1))
-        return self.l3(h2)
+        return self.l2(h1)
     
 gpu_id = -1
 network = MLP()
@@ -80,7 +80,7 @@ updater = training.StandardUpdater(train_iter, optimizer, device=gpu_id)
 
 max_epoch = 10
 
-trainer = training.Trainer(updater, (max_epoch, 'epoch'), out='werewolf_result_batchsize14')
+trainer = training.Trainer(updater, (max_epoch, 'epoch'), out='werewolf_result_batchsize14_nofirstday_1hl')
 
 trainer.extend(extensions.LogReport())
 trainer.extend(extensions.snapshot(filename='snapshot_epoch-{.updater.epoch}'))
