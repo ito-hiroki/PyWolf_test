@@ -232,6 +232,10 @@ class Goldfish(object):
                 if(self.base_info['day'] == 2):
                     self.comingout = 'POSSESS'
                     return cb.cb.comingout(self.base_info['agentIdx'], self.comingout)
+            # 4.発言回数残ってたらskip
+            if self.talk_turn <= 10:
+                return cb.skip()
+            return cb.over()
                                 
         
         # 1.CO
