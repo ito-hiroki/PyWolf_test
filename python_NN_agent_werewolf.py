@@ -8,8 +8,8 @@ import numpy as np
 import random
 
 # chainer用(アカンかったらここ消せ)
-import chainer_predict
-from chainer_predict import MLP
+import chainer_predict_kai
+from chainer_predict_kai import MLP
 from chainer import serializers
 import os
 
@@ -83,6 +83,8 @@ class Goldfish(object):
         self.menber_num = 0
         # 5任用
         self.num5_div = 0
+        # 5人人狼でseerを殺せたっぽいとき
+        self.like_possess = []
         
         
     def update(self, base_info, diff_data, request):
@@ -200,7 +202,9 @@ class Goldfish(object):
         self.talk_turn += 1
         # 5任用
         if(self.menber_num == 5):
-            if(self.base_info['myRole'] == 'VILLAGER'):
+            if(self.base_info['myRole'] == 'VILLAGER' and self.base_info['myRole'] == 'WEREWOLF'):
+                if(self.talk_turn < 3):
+                    return cb.skip()
                 return cb.vote(self.vote())
             if(self.base_info['myRole'] == 'SEER'):
                 if(self.comingout == ''):
@@ -217,7 +221,7 @@ class Goldfish(object):
                             if(self.base_info['statusMap'][str(i)] == 'ALIVE'):
                                 self.num5_div = i
                                 return cb.divined(i, 'WEREWOLF')
-            if(self.base_info['myRoll'] == 'POSSESS'):
+            if(self.base_info['myRole'] == 'POSSESS'):
                 if(self.comingout == ''):
                     self.comingout = 'SEER'
                     return cb.comingout(self.base_info['agentIdx'], self.comingout)
@@ -259,9 +263,11 @@ class Goldfish(object):
             elif(self.base_info['myRole'] == 'SEER' and self.result_roll != []):
                 divination = self.result_roll.pop()
                 return cb.divined(divination[0], divination[1])
+            if(self.result_roll == []):
+                self.not_reported = False
         if(self.base_info['myRole'] == 'POSSESS' and self.comingout == 'SEER'):
             # self.possess_justcoこれ使ってるけどco関係なくてただの欄数が欲しいだけ
-            idx = chainer_predict.estimate_wolf(self.info, self.base_info, self.infer_net)
+            idx = chainer_predict_kai.estimate_wolf(self.info, self.base_info, self.infer_net)
             if(self.possess_justco == 1 and idx != -1):
                 possess_div = []
                 for i in range(1,len(self.base_info['statusMap'])+1):
@@ -324,25 +330,42 @@ class Goldfish(object):
     def vote(self):
         # 5人人狼の場合
         if(self.menber_num == 5):
+            not_vote_list = []
             vote_list = []
             if(self.base_info['myRole'] == 'SEER'):
                 return self.num5_div
             if(self.base_info['myRole'] == 'POSSESS'):
                 return self.num5_div
-            if(self.base_info['myRole'] == 'WEREWOLF' or self.base_info['myRole'] == 'VILLAGER'):
-                for i in self.called_divined:
-                    if(i[2] == 'WEREWOLF' and i[1] != self.base_info['agentIdx']):
-                        for j in self.called_comingout:
-                            if(i[1] == j[0] and j[1] != 'SEER'):
-                                vote_list.append(i[1])
-                if(vote_list != []):
-                    self.num5_villager
-                    return random.choice(vote_list)
+            if(self.base_info['myRole'] == 'WEREWOLF'):
+                if(self.base_info['day'] == 1):
+                    for i in self.called_divined:
+                        if(self.base_info['statusMap'][i[0]] == 'ALIVE'):
+                            not_vote_list.append(i[0])
+                            not_vote_list.append(i[1])
+                    for i in range(1,6):
+                        if(i not in not_vote_list and self.base_info['statusMap'][i] == 'ALIVE'):
+                            vote_list.append(i)
+                        return random.choice(vote_list)
                 else:
                     for i in range(1, self.menber_num+1):
-                        if(self.base_info['statusMap'][i] == 'ALIVE'):
+                        if(self.base_info['statusMap'][i] == 'ALIVE' and i not in self.like_possess and i != self.base_info['agentIdx']):
                             vote_list.append(i)
                     return random.choice(vote_list)
+                    
+            if(self.base_info['myRole'] == 'VILLAGER'):
+                for i in self.called_divined:
+                    if(i[1] == self.base_info['agentIdx'] and i[2] == 'WEREWOLF'):
+                        return i[0]
+                    elif(i[1] != self.base_info['agentIdx'] and i[2] == 'WEREWOLF'):
+                        vote_list.append(i[1])
+                    not_vote_list.append(i[0])
+                if(vote_list == []):
+                    for i in range(1, 6):
+                        if(i not in not_vote_list):
+                            vote_list.append(i)
+                return random.choice(vote_list)
+                
+                     
             
         
         # 霊媒師の場合、自分黒判定or偽霊媒師が現れた時は投票
@@ -378,7 +401,7 @@ class Goldfish(object):
                     
         # 3. NN使って投票
         #x = tuple(np.array(self.info))
-        idx = chainer_predict.estimate_wolf(self.info, self.base_info, self.infer_net)
+        idx = chainer_predict_kai.estimate_wolf(self.info, self.base_info, self.infer_net)
         if(idx != -1):
             return random.choice(idx)
                 
@@ -392,7 +415,25 @@ class Goldfish(object):
         return idx
     
     def attack(self):
-        idx = chainer_predict.estimate_wolf(self.info, self.base_info, self.infer_net)
+        if(self.menber_num == 5):
+            not_attack_list = []
+            attack_list = []
+            seer_killed = False
+            for i in self.called_divined:
+                if(self.base_info['statusMap'][i[0]] == 'ALIVE'):
+                    if(i[1] == self.base_info['agentIdx'] and i[2] == 'WEREWOLF'):
+                        seer_killed = True
+                        return i[0]
+                    if(seer_killed):
+                        self.like_possess.append(i[0])
+                    not_attack_list.append(i[0])
+                    not_attack_list.append(i[1])
+            for i in range(1, self.menber_num+1):
+                if(i not in not_attack_list and self.base_info['statusMap'][i] == 'ALIVE'):
+                    attack_list.append(i)
+            return random.choice(attack_list)
+        
+        idx = chainer_predict_kai.estimate_wolf(self.info, self.base_info, self.infer_net)
         if(idx != -1):
             wolf_attack = []
             for i in range(1,len(self.base_info['statusMap'])+1):
@@ -421,7 +462,7 @@ class Goldfish(object):
             self.voted_list.append(idx)
             return idx
         
-        idx = chainer_predict.estimate_wolf(self.info, self.base_info, self.infer_net)
+        idx = chainer_predict_kai.estimate_wolf(self.info, self.base_info, self.infer_net)
         if(idx != -1):
             return random.choice(idx)
         
