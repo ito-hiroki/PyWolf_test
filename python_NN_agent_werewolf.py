@@ -20,7 +20,7 @@ class Goldfish(object):
         # myname
         self.myname = agent_name
         self.infer_net = MLP()
-        serializers.load_npz(os.path.dirname(__file__)+'/snapshot_epoch-2', \
+        serializers.load_npz(os.path.dirname(__file__)+'/snapshot_epoch-8', \
                          self.infer_net, path='updater/model:main/predictor/')
         
     def getName(self):
@@ -295,6 +295,7 @@ class Goldfish(object):
             return cb.vote(random.choice(self.possess_wolf))
         elif(self.vote_declare != self.vote()):
             self.vote_declare = self.vote()
+            print("self.vote_declare")
             print(self.vote_declare)
             return cb.vote(self.vote_declare)
         
@@ -339,16 +340,16 @@ class Goldfish(object):
             if(self.base_info['myRole'] == 'WEREWOLF'):
                 if(self.base_info['day'] == 1):
                     for i in self.called_divined:
-                        if(self.base_info['statusMap'][i[0]] == 'ALIVE'):
+                        if(self.base_info['statusMap'][str(i[0])] == 'ALIVE'):
                             not_vote_list.append(i[0])
                             not_vote_list.append(i[1])
-                    for i in range(1,6):
-                        if(i not in not_vote_list and self.base_info['statusMap'][i] == 'ALIVE'):
+                    for i in range(1,self.menber_num+1):
+                        if(i not in not_vote_list and self.base_info['statusMap'][str(i)] == 'ALIVE'):
                             vote_list.append(i)
                         return random.choice(vote_list)
                 else:
                     for i in range(1, self.menber_num+1):
-                        if(self.base_info['statusMap'][i] == 'ALIVE' and i not in self.like_possess and i != self.base_info['agentIdx']):
+                        if(self.base_info['statusMap'][str(i)] == 'ALIVE' and i not in self.like_possess and i != self.base_info['agentIdx']):
                             vote_list.append(i)
                     return random.choice(vote_list)
                     
@@ -429,7 +430,7 @@ class Goldfish(object):
                     not_attack_list.append(i[0])
                     not_attack_list.append(i[1])
             for i in range(1, self.menber_num+1):
-                if(i not in not_attack_list and self.base_info['statusMap'][i] == 'ALIVE'):
+                if(i not in not_attack_list and self.base_info['statusMap'][str(i)] == 'ALIVE'):
                     attack_list.append(i)
             return random.choice(attack_list)
         
@@ -456,7 +457,7 @@ class Goldfish(object):
         if(self.menber_num == 5):
             divine_list = []
             for i in range(1, self.menber_num+1):
-                if(self.base_info['statusMap'][i] == 'ALIVE'):
+                if(self.base_info['statusMap'][str(i)] == 'ALIVE'):
                     divine_list.append(i)
             idx = random.choice(divine_list)
             self.voted_list.append(idx)

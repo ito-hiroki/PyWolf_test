@@ -1,0 +1,14 @@
+C:\Anaconda3\lib\site-packages\sklearn\preprocessing\label.py:151: DeprecationWarning: The truth value of an empty array is ambiguous. Returning False, but in future this will result in an error. Use `array.size > 0` to check that an array is not empty.
+  if diff:
+[Parallel(n_jobs=1)]: Done  45 out of  45 | elapsed: 65.7min finished
+{'max_depth': 6, 'n_estimators': 100} 0.861447200638708
+C:\Anaconda3\lib\site-packages\sklearn\preprocessing\label.py:151: DeprecationWarning: The truth value of an empty array is ambiguous. Returning False, but in future this will result in an error. Use `array.size > 0` to check that an array is not empty.
+  if diff:
+[[ 74722 113037]
+ [ 16537 735772]]
+             precision    recall  f1-score   support
+
+         -1       0.82      0.40      0.54    187759
+          1       0.87      0.98      0.92    752309
+
+avg / total       0.86      0.86      0.84    940068

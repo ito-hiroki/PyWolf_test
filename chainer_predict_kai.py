@@ -29,6 +29,7 @@ def estimate_wolf(info, base_info, infer_net):
         y = infer_net(x)
     y = y.array
     result = y.argmax(axis=1)
+    print("estimate_wolf_result")
     print(result)
     for i in range(len(base_info['statusMap'])):
         if(base_info['statusMap'][str(i+1)] == 'ALIVE' and result[i] == 1):
