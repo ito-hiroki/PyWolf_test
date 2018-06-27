@@ -35,8 +35,10 @@ def estimate_wolf(info, base_info, infer_net):
 =======
 >>>>>>> 1aaac3ff8612131e0eb5245da0a277a6fb696f1e
     for i in range(len(base_info['statusMap'])):
-        if(base_info['statusMap'][str(i+1)] == 'ALIVE' and result[i] == 1):
+        if(base_info['statusMap'][str(i+1)] == 'ALIVE' and result[i] == 0):
             idx = i + 1
             return_result.append(idx)
-            return return_result
+    print(return_result)
+    if(return_result != []):
+        return return_result
     return -1
