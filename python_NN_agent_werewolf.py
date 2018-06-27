@@ -20,11 +20,7 @@ class Goldfish(object):
         # myname
         self.myname = agent_name
         self.infer_net = MLP()
-<<<<<<< HEAD
         serializers.load_npz(os.path.dirname(__file__)+'/snapshot_epoch-8', \
-=======
-        serializers.load_npz(os.path.dirname(__file__)+'/snapshot_epoch-3', \
->>>>>>> 1aaac3ff8612131e0eb5245da0a277a6fb696f1e
                          self.infer_net, path='updater/model:main/predictor/')
         
     def getName(self):
