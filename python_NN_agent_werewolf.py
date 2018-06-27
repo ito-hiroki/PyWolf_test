@@ -338,7 +338,7 @@ class Goldfish(object):
             if(self.base_info['myRole'] == 'POSSESS'):
                 return self.num5_div
             if(self.base_info['myRole'] == 'WEREWOLF'):
-                if(self.base_info['day'] == 1):
+                if(self.base_info['day'] == 1 and self.seer_co_num < 3):
                     for i in self.called_divined:
                         if(self.base_info['statusMap'][str(i[0])] == 'ALIVE'):
                             not_vote_list.append(i[0])
@@ -346,7 +346,7 @@ class Goldfish(object):
                     for i in range(1,self.menber_num+1):
                         if(i not in not_vote_list and self.base_info['statusMap'][str(i)] == 'ALIVE'):
                             vote_list.append(i)
-                        return random.choice(vote_list)
+                    return random.choice(vote_list)
                 else:
                     for i in range(1, self.menber_num+1):
                         if(self.base_info['statusMap'][str(i)] == 'ALIVE' and i not in self.like_possess and i != self.base_info['agentIdx']):
