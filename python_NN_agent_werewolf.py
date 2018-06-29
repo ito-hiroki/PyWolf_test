@@ -421,7 +421,7 @@ class Goldfish(object):
             attack_list = []
             seer_killed = False
             for i in self.called_divined:
-                if(self.base_info['statusMap'][i[0]] == 'ALIVE'):
+                if(self.base_info['statusMap'][str(i[0])] == 'ALIVE'):
                     if(i[1] == self.base_info['agentIdx'] and i[2] == 'WEREWOLF'):
                         seer_killed = True
                         return i[0]
