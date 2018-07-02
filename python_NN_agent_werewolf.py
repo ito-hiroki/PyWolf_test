@@ -432,7 +432,14 @@ class Goldfish(object):
             for i in range(1, self.menber_num+1):
                 if(i not in not_attack_list and self.base_info['statusMap'][str(i)] == 'ALIVE'):
                     attack_list.append(i)
-            return random.choice(attack_list)
+            if(attack_list != []):
+                return random.choice(attack_list)
+            else:
+                # リストが空だったらnot_attack_listの制約無くす
+                for i in range(1, self.menber_num+1):
+                    if(self.base_info['statusMap'][str(i)] == 'ALIVE'):
+                        attack_list.append(i)
+                return random.choice(attack_list)
         
         idx = chainer_predict_kai.estimate_wolf(self.info, self.base_info, self.infer_net)
         if(idx != -1):
